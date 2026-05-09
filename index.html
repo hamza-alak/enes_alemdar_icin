@@ -5,412 +5,540 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta property="og:title" content="Alemde Şer, Vadide Doğum Günü! 🎁">
     <meta property="og:description" content="Raconu kesmek için dokun...">
-    
     <title>Kurtlar Vadisi - Doğum Günü</title>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
-        /* GENEL AYARLAR */
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #d4d4d4;
-            font-family: 'Times New Roman', Times, serif;
-            overflow: hidden;
-            background-color: #050505;
+        :root {
+            --kirmizi:       #8b0000;
+            --kirmizi-koyu:  #5e0000;
+            --metin:         #d4d4d4;
+            --metin-soluk:   #909090;
+            --siyah:         #050505;
         }
 
-        /* SİNEMATİK EKRAN YÖNETİMİ */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--siyah);
+            color: var(--metin);
+            font-family: 'Cinzel', 'Times New Roman', serif;
+            overflow: hidden;
+            height: 100dvh; /* dvh: iOS adres çubuğunu hesaba katar */
+        }
+
+        /* ─── EKRAN SİSTEMİ ─────────────────────────────── */
         .screen {
-            display: none; 
-            min-height: 100vh;
+            display: none;
+            position: fixed;
+            inset: 0;                     /* top/right/bottom/left: 0 */
+            width: 100%; height: 100%;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 20px;
             background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        
-        .active {
-            display: flex; 
-            animation: sinematikGecis 1s ease-out forwards;
+            background-position: center top;
+            background-repeat: no-repeat;
+            /* background-attachment:fixed KALDIRILDI → iOS'ta bozuyor */
         }
 
-        @keyframes sinematikGecis {
-            0% { opacity: 0; filter: blur(5px); transform: scale(1.02); }
-            100% { opacity: 1; filter: blur(0); transform: scale(1); }
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.7s ease-out forwards;
         }
 
-        #ekran-giris { background-image: url('kurtlar_vadisi_ilk_arkaplan.png'); }
-        .diger-ekran { background-image: url('kurtlar_vadisi_arkaplan.jpg'); }
+        .screen.cikiyor {
+            animation: fadeOut 0.35s ease-in forwards;
+        }
 
+        @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        /* Arka plan görselleri */
+        #ekran-giris       { background-image: url('kurtlar_vadisi_ilk_arkaplan.png'); }
+        .diger-ekran       { background-image: url('kurtlar_vadisi_arkaplan.jpg'); }
+
+        /* Overlay */
         .overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: -1;
+            inset: 0;
+            background: rgba(0,0,0,0.72);
+            z-index: 0;
+            pointer-events: none;
         }
 
-        /* BUTON TASARIMI */
+        /* Tüm içerik overlay'in üstünde */
+        .icerik {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ─── BUTON ──────────────────────────────────────── */
         .btn-racon {
-            background: rgba(94, 0, 0, 0.8);
-            color: white;
-            border: 1px solid #8b0000;
-            padding: 15px 45px;
-            font-size: 20px;
-            font-weight: normal;
-            font-family: 'Times New Roman', Times, serif;
+            background: rgba(94,0,0,0.88);
+            color: #e8e8e8;
+            border: 1px solid var(--kirmizi);
+            padding: 14px 44px;
+            font-size: clamp(14px, 3.5vw, 18px);
+            font-family: inherit;
             cursor: pointer;
             border-radius: 2px;
-            margin-top: 30px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            margin-top: 28px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            transition: all 0.5s ease;
-            z-index: 15;
-            position: relative;
-        }
-        
-        .btn-racon:hover {
-            background: rgba(139, 0, 0, 1);
-            box-shadow: 0 0 20px rgba(139, 0, 0, 0.6);
-            border-color: #ff0000;
+            box-shadow: 0 0 18px rgba(0,0,0,0.8);
+            transition: background 0.3s, box-shadow 0.3s, transform 0.15s;
+            -webkit-tap-highlight-color: transparent; /* mobilde mavi highlight kalkıyor */
         }
 
-        /* ========================================== */
-        /* MASAÜSTÜ: PALA VE YAZI HİZALAMASI          */
-        /* ========================================== */
+        .btn-racon:not(:disabled):hover,
+        .btn-racon:not(:disabled):active {
+            background: rgba(139,0,0,1);
+            box-shadow: 0 0 28px rgba(139,0,0,0.55);
+            border-color: #ff3333;
+            transform: translateY(-1px);
+        }
+
+        .btn-racon:disabled {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ─── GİRİŞ EKRANI ───────────────────────────────── */
         .giris-icerik {
-            display: flex;
+            position: relative;
+            z-index: 2;
             width: 100%;
             height: 100%;
+            display: flex;
             align-items: center;
-            justify-content: flex-start; 
-            padding-left: 15%; /* Yazı biraz daha merkeze çekildi */
-            z-index: 10;
+            justify-content: flex-start;
+            padding-left: clamp(20px, 10vw, 120px);
         }
 
-        .baslik-kutu { text-align: left; z-index: 10; }
+        .baslik-kutu { text-align: left; }
 
-        .sinematik-baslik { 
-            font-size: 3.5rem; 
-            color: #d4d4d4; 
-            margin: 0 0 30px 0; 
-            text-shadow: 2px 2px 10px #000; 
-            letter-spacing: 2px;
+        .ust-etiket {
+            font-size: clamp(10px, 2.5vw, 13px);
+            letter-spacing: 6px;
+            color: var(--metin-soluk);
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
 
+        .sinematik-baslik {
+            font-size: clamp(2rem, 6vw, 3.8rem);
+            color: var(--metin);
+            text-shadow: 2px 2px 18px #000;
+            letter-spacing: 3px;
+            line-height: 1.25;
+            font-weight: 600;
+        }
+
+        /* Pala: position absolute screen içinde */
         .pala-sabit {
             position: absolute;
-            right: -5%; /* Pala ekranın en sağına itildi */
-            bottom: -5%;
-            height: 80vh; 
+            right: 0;
+            bottom: 0;
+            height: 85vh;
+            max-height: 720px;
+            width: auto;
             object-fit: contain;
-            z-index: 5;
-            filter: drop-shadow(-10px 10px 20px rgba(0,0,0,0.9)); 
-            pointer-events: none; 
-            animation: palaNefes 4s infinite alternate ease-in-out;
+            z-index: 1;
+            filter: drop-shadow(-12px 8px 22px rgba(0,0,0,0.95));
+            pointer-events: none;
+            animation: palaNefes 4s ease-in-out infinite alternate;
+            transform-origin: bottom right;
         }
 
         @keyframes palaNefes {
-            0% { transform: scale(1) translateY(0); }
-            100% { transform: scale(1.02) translateY(-5px); }
+            from { transform: scale(1)     translateY(0px); }
+            to   { transform: scale(1.018) translateY(-7px); }
         }
 
-        /* KARAKTER SEÇİMİ */
-        .char-list { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 450px; margin-top: 20px; z-index: 10;}
-        .char-btn {
-            display: flex; align-items: center; gap: 25px;
-            background: rgba(10, 10, 10, 0.7);
-            border: 1px solid #3a0000;
-            padding: 10px 15px; 
-            cursor: pointer; 
-            transition: all 0.4s ease;
-        }
-        .char-btn:hover { 
-            background: rgba(50, 0, 0, 0.8);
-            border-color: #8b0000;
-            padding-left: 25px; 
-        }
-        .char-btn img { 
-            width: 80px; 
-            height: 80px; 
-            object-fit: cover; 
-            border: 1px solid #5e0000; 
-        }
-        .char-btn h3 { margin: 0; font-size: 26px; color: #ccc; font-weight: normal; letter-spacing: 1px;}
-
-        /* VİDEO EKRANLARI */
-        .video-container {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 20px; margin-bottom: 10px; width: 100%; max-width: 800px; z-index: 10;
-        }
-        video { 
-            max-width: 100%; 
-            width: 650px; 
-            border: 1px solid #3a0000; 
-            background: #000; 
-            display: block; 
-            box-shadow: 0 0 30px rgba(0,0,0,0.9);
-        }
-        .yan-yazi {
-            font-size: 28px; font-style: italic; color: #a0a0a0; 
-            display: none; 
-            text-shadow: 2px 2px 5px #000;
-            letter-spacing: 1px;
-        }
-
-        /* FİNAL EKRANI VE SİNEMATİK MESAJ KUTUSU */
-        #final-video, #extra-video, #video-kahkaha { 
-            width: 700px; max-width: 100%; border: 1px solid #3a0000; box-shadow: 0 0 40px rgba(0,0,0,0.9); z-index: 10;
-        }
-        #extra-video, #video-kahkaha { display: none; }
-        
-        #dogumGunuKarti {
-            display: none; 
+        /* ─── KARAKTER SEÇİMİ ────────────────────────────── */
+        .char-list {
+            display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
+            gap: 12px;
             width: 100%;
-            z-index: 10;
-        }
-        
-        #dogumGunuKarti h2 { 
-            color: #fff; 
-            font-size: 40px; 
-            font-style: italic; 
-            font-weight: normal;
-            text-shadow: 0 0 15px rgba(255,255,255,0.3); 
-            letter-spacing: 3px;
+            max-width: 420px;
+            margin-top: 18px;
+            padding: 0 16px;
         }
 
-        /* ========================================== */
-        /* MOBİL UYUM (TELEFON EKRANLARI İÇİN)        */
-        /* ========================================== */
-        @media (max-width: 768px) {
-            .screen {
-                background-attachment: scroll; /* Mobildeki arka plan bozulmasını önler */
-                background-position: top center;
-                padding: 10px;
-            }
+        .char-btn {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(8,8,8,0.78);
+            border: 1px solid #3a0000;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: background 0.3s, border-color 0.3s, padding-left 0.3s;
+            -webkit-tap-highlight-color: transparent;
+            text-align: left;
+        }
+
+        .char-btn:hover,
+        .char-btn:active {
+            background: rgba(55,0,0,0.88);
+            border-color: var(--kirmizi);
+            padding-left: 28px;
+        }
+
+        .char-btn img {
+            width: 68px; height: 68px;
+            object-fit: cover;
+            border: 1px solid var(--kirmizi-koyu);
+            flex-shrink: 0;
+        }
+
+        .char-btn h3 {
+            font-size: clamp(16px, 4vw, 24px);
+            color: #ccc;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        /* ─── VİDEO EKRANLARI ────────────────────────────── */
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 700px;
+            padding: 0 12px;
+        }
+
+        .racon-video {
+            width: 100%;
+            max-width: 640px;
+            border: 1px solid #3a0000;
+            background: #000;
+            display: block;
+            box-shadow: 0 0 40px rgba(0,0,0,0.95);
+        }
+
+        .yan-yazi {
+            font-size: clamp(15px, 4vw, 26px);
+            font-style: italic;
+            color: var(--metin-soluk);
+            display: none;
+            text-shadow: 2px 2px 8px #000;
+            letter-spacing: 1px;
+            padding: 0 20px;
+            animation: fadeIn 1.2s ease-out forwards;
+        }
+
+        /* ─── FİNAL EKRANI ───────────────────────────────── */
+        .final-video-elem {
+            width: 100%;
+            max-width: 680px;
+            border: 1px solid #3a0000;
+            box-shadow: 0 0 50px rgba(0,0,0,0.95);
+            position: relative;
+            z-index: 2;
+            padding: 0 12px;
+        }
+
+        #extra-video, #video-kahkaha { display: none; }
+
+        #dogumGunuKarti {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        #dogumGunuKarti.goster {
+            display: flex;
+            animation: fadeIn 1.5s ease-out forwards;
+        }
+
+        .kart-cizgi {
+            width: 70px; height: 1px;
+            background: var(--kirmizi);
+            margin: 14px 0;
+        }
+
+        #dogumGunuKarti h2 {
+            color: #fff;
+            font-size: clamp(20px, 5vw, 38px);
+            font-style: italic;
+            font-weight: 400;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+            letter-spacing: 3px;
+            line-height: 1.7;
+        }
+
+        /* ─── MOBİL ──────────────────────────────────────── */
+        @media (max-width: 600px) {
             .giris-icerik {
                 padding-left: 0;
                 justify-content: center;
-                align-items: flex-start; /* Mobilde yazıyı yukarı iter */
-                padding-top: 10vh;
+                align-items: flex-start;
+                padding-top: 8dvh;
+                padding-bottom: 40dvh; /* pala için boşluk */
             }
-            .baslik-kutu {
-                text-align: center;
-            }
-            .sinematik-baslik {
-                font-size: 2.2rem;
-            }
+
+            .baslik-kutu { text-align: center; }
+
             .pala-sabit {
-                height: 45vh; /* Pala'yı telefon ekranına sığacak kadar küçültür */
-                right: -10px;
-                bottom: -10px;
+                height: 42dvh;
+                max-height: 350px;
+                right: -5px;
+                bottom: -5px;
             }
-            .char-btn img {
-                width: 60px;
-                height: 60px;
-            }
-            .char-btn h3 {
-                font-size: 22px;
-            }
-            video, #final-video, #extra-video, #video-kahkaha {
-                width: 95%; /* Videoların telefondan taşmasını engeller */
-            }
-            .yan-yazi {
-                font-size: 20px;
-            }
-            #dogumGunuKarti h2 {
-                font-size: 24px;
-                text-align: center;
-                padding: 0 20px;
-            }
+
+            .char-btn img { width: 55px; height: 55px; }
         }
     </style>
 </head>
 <body>
 
-    <audio id="vadiMuzigi" src="pusu_muzik.mp3" loop></audio>
-    <audio id="sesIlk" src="babayigit.mp3"></audio>
+    <audio id="vadiMuzigi" src="pusu_muzik.mp3" loop preload="auto"></audio>
+    <audio id="sesIlk"     src="babayigit.mp3"  preload="auto"></audio>
 
+    <!-- ══ EKRAN 1: GİRİŞ ══════════════════════════════════ -->
     <div id="ekran-giris" class="screen active">
         <div class="overlay"></div>
-        
+
         <div class="giris-icerik">
             <div class="baslik-kutu">
-                <h2 class="sinematik-baslik">Hoşgeldin Babayiğit</h2>
-                <button class="btn-racon" onclick="baslangicRaconuKes()">RACON KES</button>
+                <p class="ust-etiket">Alemde Şer Vadide</p>
+                <h2 class="sinematik-baslik">Hoşgeldin<br>Babayiğit</h2>
+                <button class="btn-racon" onclick="baslangicRaconuKes(this)">RACON KES</button>
             </div>
         </div>
 
         <img src="pala.png" alt="Pala" class="pala-sabit">
     </div>
 
+    <!-- ══ EKRAN 2: KARAKTER SEÇ ═══════════════════════════ -->
     <div id="ekran-karakterler" class="screen diger-ekran">
         <div class="overlay"></div>
-        <h1 class="sinematik-baslik">Karakter Seç</h1>
-        
-        <div class="char-list">
-            <div class="char-btn" onclick="karakterSec('cakir')">
-                <img src="cakir.png" alt="Çakır">
-                <h3>Enes Çakır</h3>
-            </div>
-            <div class="char-btn" onclick="karakterSec('polat')">
-                <img src="polat_alemdar.png" alt="Polat">
-                <h3>Enes Alemdar</h3>
-            </div>
-            <div class="char-btn" onclick="karakterSec('akbey')">
-                <img src="aslan_akbey.png" alt="Akbey">
-                <h3>Enes Akbey</h3>
-            </div>
-            <div class="char-btn" onclick="karakterSec('memati')">
-                <img src="memati.jpg" alt="Memati">
-                <h3>Enes Memati</h3>
+        <div class="icerik">
+            <h1 class="sinematik-baslik">Karakter Seç</h1>
+            <p class="ust-etiket" style="margin-top:8px;">Kim olmak istiyorsun</p>
+            <div class="char-list">
+                <div class="char-btn" onclick="karakterSec('cakir')">
+                    <img src="cakir.png" alt="Çakır">
+                    <h3>Enes Çakır</h3>
+                </div>
+                <div class="char-btn" onclick="karakterSec('polat')">
+                    <img src="polat_alemdar.png" alt="Polat">
+                    <h3>Enes Alemdar</h3>
+                </div>
+                <div class="char-btn" onclick="karakterSec('akbey')">
+                    <img src="aslan_akbey.png" alt="Akbey">
+                    <h3>Enes Akbey</h3>
+                </div>
+                <div class="char-btn" onclick="karakterSec('memati')">
+                    <img src="memati.jpg" alt="Memati">
+                    <h3>Enes Memati</h3>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- ══ EKRAN 3–6: KARAKTER VİDEOLARI ══════════════════ -->
     <div id="ekran-cakir" class="screen diger-ekran">
         <div class="overlay"></div>
-        <div class="video-container">
-            <div id="yazi-cakir" class="yan-yazi">"Azdan az, çoktan çok gider..."</div>
-            <video id="video-cakir" src="racon_cakir.mp4" playsinline preload="auto"></video>
+        <div class="icerik video-container">
+            <div id="yazi-cakir" class="yan-yazi">"Azdan az, çoktan çok gider…"</div>
+            <video id="video-cakir" class="racon-video" src="racon_cakir.mp4" playsinline webkit-playsinline preload="none"></video>
         </div>
-        <button id="btn-cakir" class="btn-racon" onclick="videoBaslat('cakir')">RACON KES</button>
+        <button id="btn-cakir" class="btn-racon" onclick="videoBaslat('cakir', this)">RACON KES</button>
     </div>
 
     <div id="ekran-polat" class="screen diger-ekran">
         <div class="overlay"></div>
-        <div class="video-container">
+        <div class="icerik video-container">
             <div id="yazi-polat" class="yan-yazi">"Ben Polat Alemdar'ım!"</div>
-            <video id="video-polat" src="ben_polat_alemdarim.mp4" playsinline preload="auto"></video>
+            <video id="video-polat" class="racon-video" src="ben_polat_alemdarim.mp4" playsinline webkit-playsinline preload="none"></video>
         </div>
-        <button id="btn-polat" class="btn-racon" onclick="videoBaslat('polat')">RACON KES</button>
+        <button id="btn-polat" class="btn-racon" onclick="videoBaslat('polat', this)">RACON KES</button>
     </div>
 
     <div id="ekran-akbey" class="screen diger-ekran">
         <div class="overlay"></div>
-        <div class="video-container">
+        <div class="icerik video-container">
             <div id="yazi-akbey" class="yan-yazi">"İki kişinin bildiği sır değildir."</div>
-            <video id="video-akbey" src="3_2.mp4" playsinline preload="auto"></video>
+            <video id="video-akbey" class="racon-video" src="3_2.mp4" playsinline webkit-playsinline preload="none"></video>
         </div>
-        <button id="btn-akbey" class="btn-racon" onclick="videoBaslat('akbey')">RACON KES</button>
+        <button id="btn-akbey" class="btn-racon" onclick="videoBaslat('akbey', this)">RACON KES</button>
     </div>
 
     <div id="ekran-memati" class="screen diger-ekran">
         <div class="overlay"></div>
-        <div class="video-container">
+        <div class="icerik video-container">
             <div id="yazi-memati" class="yan-yazi">"Kalk ulan kalk!"</div>
-            <video id="video-memati" src="kalk.mp4" playsinline preload="auto"></video>
+            <video id="video-memati" class="racon-video" src="kalk.mp4" playsinline webkit-playsinline preload="none"></video>
         </div>
-        <button id="btn-memati" class="btn-racon" onclick="videoBaslat('memati')">RACON KES</button>
+        <button id="btn-memati" class="btn-racon" onclick="videoBaslat('memati', this)">RACON KES</button>
     </div>
 
+    <!-- ══ EKRAN 7: FİNAL ══════════════════════════════════ -->
     <div id="ekran-final" class="screen diger-ekran">
         <div class="overlay"></div>
-        
-        <video id="final-video" src="son_video.mp4" playsinline preload="auto"></video>
-        <video id="extra-video" src="dogum1.mp4" playsinline preload="auto"></video>
 
-        <button id="final-btn" class="btn-racon" onclick="finalVideosuBaslat()">RACON KES</button>
+        <video id="final-video"   class="final-video-elem" src="son_video.mp4" playsinline webkit-playsinline preload="none"></video>
+        <video id="extra-video"   class="final-video-elem" src="dogum1.mp4"    playsinline webkit-playsinline preload="none"></video>
+        <video id="video-kahkaha" class="final-video-elem" src="kahkaha.mp4"   playsinline webkit-playsinline preload="none"></video>
+
+        <button id="final-btn" class="btn-racon" onclick="finalVideosuBaslat(this)">RACON KES</button>
 
         <div id="dogumGunuKarti">
-            <h2>İyiki doğdun abim iyiki varsın.</h2>
+            <div class="kart-cizgi"></div>
+            <h2>İyiki doğdun abim,<br>iyiki varsın.</h2>
+            <div class="kart-cizgi"></div>
         </div>
-
-        <video id="video-kahkaha" src="kahkaha.mp4" playsinline preload="auto"></video>
     </div>
 
     <script>
-        function ekraniDegistir(gizlenecekId, gosterilecekId) {
-            document.getElementById(gizlenecekId).classList.remove('active');
+    // ═══════════════════════════════════════════════════
+    // EKRAN GEÇİŞ SİSTEMİ
+    // ═══════════════════════════════════════════════════
+    let aktifEkranId  = 'ekran-giris';
+    let gecisKilitli  = false;
+
+    function ekraniDegistir(eskiId, yeniId) {
+        if (gecisKilitli) return;
+        gecisKilitli = true;
+
+        const eski = document.getElementById(eskiId);
+        const yeni = document.getElementById(yeniId);
+
+        eski.classList.add('cikiyor');
+
+        setTimeout(() => {
+            eski.classList.remove('active', 'cikiyor');
+            yeni.classList.add('active');
+            aktifEkranId = yeniId;
+            setTimeout(() => { gecisKilitli = false; }, 700); // fadeIn bitmeden kilidi açma
+        }, 350); // fadeOut süresiyle eşleşmeli
+    }
+
+    // ═══════════════════════════════════════════════════
+    // BAŞLANGIÇ RACONU (çift tıklama korumalı)
+    // ═══════════════════════════════════════════════════
+    let sesBasladi = false;
+
+    function baslangicRaconuKes(buton) {
+        if (sesBasladi) return;
+        sesBasladi = true;
+        buton.disabled = true;
+
+        const fonMuzigi = document.getElementById('vadiMuzigi');
+        const sesIlk    = document.getElementById('sesIlk');
+
+        fonMuzigi.volume = 0.35;
+        fonMuzigi.play().catch(() => {}); // Otomatik oynatma sessiz başarısız olabilir
+
+        sesIlk.play().catch(() => {
+            // Ses başlamazsa direkt geç
+            ekraniDegistir('ekran-giris', 'ekran-karakterler');
+        });
+
+        // Ses bitince geç — once:true ile sadece bir kez tetiklenir
+        let gecisYapildi = false;
+        function gec() {
+            if (gecisYapildi) return;
+            gecisYapildi = true;
+            ekraniDegistir('ekran-giris', 'ekran-karakterler');
+        }
+
+        sesIlk.addEventListener('ended', gec, { once: true });
+        sesIlk.addEventListener('error', gec, { once: true });
+        setTimeout(gec, 6500); // Failsafe: 6.5 sn içinde mutlaka geç
+    }
+
+    // ═══════════════════════════════════════════════════
+    // KARAKTER SEÇİMİ
+    // ═══════════════════════════════════════════════════
+    function karakterSec(k) {
+        ekraniDegistir('ekran-karakterler', 'ekran-' + k);
+        // Ekran değiştikten sonra video'yu yükle (gereksiz bant genişliği tüketmez)
+        setTimeout(() => {
+            const v = document.getElementById('video-' + k);
+            if (v && v.readyState === 0) v.load();
+        }, 450);
+    }
+
+    // ═══════════════════════════════════════════════════
+    // KARAKTER VİDEOSU BAŞLAT
+    // ═══════════════════════════════════════════════════
+    function videoBaslat(k, buton) {
+        const video = document.getElementById('video-' + k);
+        const yazi  = document.getElementById('yazi-' + k);
+
+        buton.disabled = true;  // Çift tıklamayı engelle
+        yazi.style.display = 'block';
+
+        video.volume = 1.0;
+        video.play().catch(() => {
+            video.load();
+            video.play().catch(() => {});
+        });
+
+        video.addEventListener('ended', () => {
             setTimeout(() => {
-                document.getElementById(gosterilecekId).classList.add('active');
-            }, 100); 
+                ekraniDegistir('ekran-' + k, 'ekran-final');
+                setTimeout(() => {
+                    const fv = document.getElementById('final-video');
+                    if (fv.readyState === 0) fv.load();
+                }, 450);
+            }, 1200);
+        }, { once: true }); // once:true → birden fazla tetiklenmeyi önler
+    }
+
+    // ═══════════════════════════════════════════════════
+    // FİNAL VİDEOSU ZINCIRI
+    // ═══════════════════════════════════════════════════
+    function finalVideosuBaslat(buton) {
+        buton.disabled = true;
+
+        const finalVideo   = document.getElementById('final-video');
+        const extraVideo   = document.getElementById('extra-video');
+        const kart         = document.getElementById('dogumGunuKarti');
+        const kahkahaVideo = document.getElementById('video-kahkaha');
+
+        function oynat(el) {
+            return el.play().catch(() => { el.load(); return el.play().catch(() => {}); });
         }
 
-        function baslangicRaconuKes() {
-            let fonMuzigi = document.getElementById('vadiMuzigi');
-            fonMuzigi.volume = 0.4; 
-            fonMuzigi.play();
+        oynat(finalVideo);
 
-            let sesIlk = document.getElementById('sesIlk');
-            sesIlk.play();
+        finalVideo.addEventListener('ended', () => {
+            finalVideo.style.display = 'none';
+            extraVideo.style.display = 'block';
+            if (extraVideo.readyState === 0) extraVideo.load();
+            oynat(extraVideo);
 
-            sesIlk.onended = function() {
-                ekraniDegistir('ekran-giris', 'ekran-karakterler');
-            };
-            
-            setTimeout(function() {
-                if(document.getElementById('ekran-giris').classList.contains('active')) {
-                    ekraniDegistir('ekran-giris', 'ekran-karakterler');
-                }
-            }, 5000);
-        }
+            extraVideo.addEventListener('ended', () => {
+                extraVideo.style.display = 'none';
+                kart.classList.add('goster');
 
-        function karakterSec(karakterAdi) {
-            ekraniDegistir('ekran-karakterler', 'ekran-' + karakterAdi);
-        }
-
-        function videoBaslat(karakterAdi) {
-            let video = document.getElementById('video-' + karakterAdi);
-            let yazi = document.getElementById('yazi-' + karakterAdi);
-            let buton = document.getElementById('btn-' + karakterAdi);
-            
-            buton.style.display = "none";
-            yazi.style.display = "block";
-            
-            video.volume = 1.0;
-            video.play();
-
-            video.onended = function() {
-                setTimeout(function() {
-                    ekraniDegistir('ekran-' + karakterAdi, 'ekran-final');
-                }, 1000); 
-            };
-        }
-
-        function finalVideosuBaslat() {
-            let finalBtn = document.getElementById('final-btn');
-            let finalVideo = document.getElementById('final-video');
-            let extraVideo = document.getElementById('extra-video'); 
-            let kart = document.getElementById('dogumGunuKarti');
-            let kahkahaVideo = document.getElementById('video-kahkaha');
-
-            finalBtn.style.display = "none";
-            finalVideo.play();
-
-            finalVideo.onended = function() {
-                finalVideo.style.display = "none";
-                extraVideo.style.display = "block";
-                extraVideo.play();
-            };
-
-            extraVideo.onended = function() {
-                extraVideo.style.display = "none";
-                kart.style.display = "flex";
-
-                setTimeout(function() {
-                    kart.style.display = "none";
-                    kahkahaVideo.style.display = "block";
-                    kahkahaVideo.play();
+                setTimeout(() => {
+                    kart.classList.remove('goster');
+                    kahkahaVideo.style.display = 'block';
+                    if (kahkahaVideo.readyState === 0) kahkahaVideo.load();
+                    oynat(kahkahaVideo);
                 }, 10000);
-            };
-        }
+            }, { once: true });
+        }, { once: true });
+    }
     </script>
 </body>
 </html>
