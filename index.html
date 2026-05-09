@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kürtler Vadisi - Doğum Günü</title>
     <style>
-        /* GENEL AYARLAR VE VADİ TEMASI */
+        /* GENEL AYARLAR */
         body {
             margin: 0;
             padding: 0;
@@ -13,34 +13,45 @@
             background-color: #050505;
             color: #fff;
             overflow-x: hidden;
-            /* Ortak Arka Plan Resmi */
-            background-image: url('arkaplan.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
         }
 
-        /* Arka planı biraz karartmak için tül */
-        .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: -1;
-        }
-
-        /* EKRAN YÖNETİMİ */
+        /* EKRAN YÖNETİMİ VE ARKA PLANLAR */
         .screen {
-            display: none; /* Varsayılan olarak tüm ekranlar gizli */
+            display: none; 
             min-height: 100vh;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             padding: 20px;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            z-index: 1;
         }
+        
         .active {
-            display: flex; /* Sadece aktif ekran görünür */
+            display: flex; 
             animation: fadeIn 1s;
+        }
+
+        /* İlk Ekran Arka Planı */
+        #ekran-giris {
+            background-image: url('kurtlar_vadisi_ilk_arkaplan.png');
+        }
+
+        /* Diğer Tüm Ekranların Arka Planı */
+        .diger-ekran {
+            background-image: url('kurtlar_vadisi_arkaplan.jpg');
+        }
+
+        /* Yazıların okunması için siyah tül efekti */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: -1;
         }
 
         @keyframes fadeIn {
@@ -66,189 +77,191 @@
         .btn-racon:active { transform: scale(0.95); }
 
         /* EKRAN 1: GİRİŞ */
-        .baslik { font-size: 3rem; color: #b22222; text-shadow: 2px 2px 4px #000; margin-bottom: 10px; }
-        .alt-baslik { font-size: 2rem; color: #ccc; margin-bottom: 20px; }
-        .pala-img { max-width: 200px; border-radius: 10px; border: 2px solid #5e0000; }
+        .giris-ust-kisim {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #5e0000;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Mobilde alt alta geçmesi için */
+        }
+        .baslik-kutu h1 { font-size: 3.5rem; color: #b22222; text-shadow: 2px 2px 4px #000; margin: 0; }
+        .baslik-kutu h2 { font-size: 2rem; color: #ccc; margin: 10px 0 0 0; }
+        .pala-img { max-width: 180px; border-radius: 10px; border: 2px solid #5e0000; }
 
         /* EKRAN 2: KARAKTER SEÇİMİ */
-        .char-list { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
+        .char-list { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 450px; }
         .char-btn {
             display: flex; align-items: center; gap: 20px;
-            background: rgba(20, 20, 20, 0.8);
+            background: rgba(20, 20, 20, 0.85);
             border: 1px solid #5e0000;
             padding: 10px; cursor: pointer; border-radius: 8px;
             transition: background 0.3s;
         }
         .char-btn:hover { background: rgba(94, 0, 0, 0.5); }
-        .char-btn img { width: 80px; height: 80px; object-fit: cover; border-radius: 50%; }
-        .char-btn h3 { margin: 0; font-size: 24px; color: #fff; }
+        .char-btn img { width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #b22222; }
+        .char-btn h3 { margin: 0; font-size: 26px; color: #fff; }
 
         /* VİDEO EKRANLARI */
         .video-container {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
-            gap: 30px; margin-bottom: 20px; max-width: 800px;
-            flex-wrap: wrap; /* Mobilde alt alta geçmesi için */
+            gap: 30px; margin-bottom: 20px; max-width: 900px;
+            flex-wrap: wrap;
         }
-        video { max-width: 100%; width: 400px; border: 3px solid #5e0000; border-radius: 10px; }
+        video { max-width: 100%; width: 500px; border: 3px solid #5e0000; border-radius: 10px; background: #000; display: none; }
         .yan-yazi {
             font-size: 24px; font-style: italic; color: #b22222;
-            display: none; /* Butona basana kadar gizli */
+            display: none;
             max-width: 300px; text-shadow: 1px 1px 3px #000;
         }
 
         /* EKRAN 3: FİNAL VE DOĞUM GÜNÜ KARTI */
-        .final-img { max-width: 300px; border: 3px solid #5e0000; border-radius: 10px; margin-bottom: 20px; }
+        #final-video { width: 600px; max-width: 100%; border: 3px solid #5e0000; border-radius: 10px; display: none; }
+        
         #dogumGunuKarti {
-            display: none; /* Ses bitene kadar gizli */
+            display: none; 
             background: rgba(10, 10, 10, 0.95);
             border: 2px solid #b22222;
             padding: 40px; margin-top: 30px; border-radius: 15px;
             box-shadow: 0 0 30px rgba(178, 34, 34, 0.6);
         }
         #dogumGunuKarti h2 { color: #fff; font-size: 28px; }
-        .silah-icon { width: 100px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- Arka Plan Siyah Tülü -->
-    <div class="overlay"></div>
+    <audio id="vadiMuzigi" src="pusu_müzik.mp3" loop></audio>
+    <audio id="sesIlk" src="babayigit.mp3"></audio>
 
-    <!-- SES DOSYALARI (Gizli) -->
-    <audio id="vadiMuzigi" src="vadi_muzik.mp3" loop></audio>
-    <audio id="ses1" src="ses1.mp3"></audio>
-    <audio id="ses2" src="ses2.mp3"></audio> <!-- Çakır -->
-    <audio id="ses3" src="ses3.mp3"></audio> <!-- Alemdar -->
-    <audio id="ses4" src="ses4.mp3"></audio> <!-- Akbey -->
-    <audio id="ses5" src="ses5.mp3"></audio> <!-- Memati -->
-    <audio id="sesFinal" src="ses6.mp3"></audio> <!-- Final Sesi -->
-
-    <!-- ========================================== -->
-    <!-- EKRAN 1: GİRİŞ -->
-    <!-- ========================================== -->
     <div id="ekran-giris" class="screen active">
-        <h1 class="baslik">Kürtler Vadisi</h1>
-        <img src="pala.jpg" alt="Pala" class="pala-img">
-        <h2 class="alt-baslik">Hoşgeldin Babayiğit</h2>
+        <div class="overlay"></div>
+        
+        <div class="giris-ust-kisim">
+            <div class="baslik-kutu">
+                <h1>Kürtler Vadisi</h1>
+                <h2>Hoşgeldin Babayiğit</h2>
+            </div>
+            <img src="pala.png" alt="Pala" class="pala-img">
+        </div>
+        
         <button class="btn-racon" onclick="baslangicRaconuKes()">RACON KES</button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- EKRAN 2: KARAKTER SEÇİMİ -->
-    <!-- ========================================== -->
-    <div id="ekran-karakterler" class="screen">
-        <h1 class="baslik">Karakter Seç</h1>
+    <div id="ekran-karakterler" class="screen diger-ekran">
+        <div class="overlay"></div>
+        <h1 style="color:#b22222; font-size: 3rem; margin-bottom:30px;">Karakter Seç</h1>
+        
         <div class="char-list">
-            <div class="char-btn" onclick="karakterSec('cakir', 'ses2')">
-                <img src="cakir.jpg" alt="Çakır">
+            <div class="char-btn" onclick="karakterSec('cakir')">
+                <img src="çakir.png" alt="Çakır">
                 <h3>Enes Çakır</h3>
             </div>
-            <div class="char-btn" onclick="karakterSec('alemdar', 'ses3')">
-                <img src="polat.jpg" alt="Alemdar">
+            <div class="char-btn" onclick="karakterSec('polat')">
+                <img src="polat_alemdar.png" alt="Polat">
                 <h3>Enes Alemdar</h3>
             </div>
-            <div class="char-btn" onclick="karakterSec('akbey', 'ses4')">
-                <img src="aslan.jpg" alt="Akbey">
+            <div class="char-btn" onclick="karakterSec('akbey')">
+                <img src="aslan_akbey.png" alt="Akbey">
                 <h3>Enes Akbey</h3>
             </div>
-            <div class="char-btn" onclick="karakterSec('memati', 'ses5')">
+            <div class="char-btn" onclick="karakterSec('memati')">
                 <img src="memati.jpg" alt="Memati">
-                <h3>Enes (Memati)</h3>
+                <h3>Enes Memati</h3>
             </div>
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- KARAKTER EKRANLARI (DİNAMİK) -->
-    <!-- ========================================== -->
-    
-    <!-- ÇAKIR EKRANI -->
-    <div id="ekran-cakir" class="screen">
-        <h1 class="baslik">Enes Çakır</h1>
+    <div id="ekran-cakir" class="screen diger-ekran">
+        <div class="overlay"></div>
+        <h1 style="color:#b22222; font-size: 3rem;">Enes Çakır</h1>
         <div class="video-container">
             <div id="yazi-cakir" class="yan-yazi">"Azdan az, çoktan çok gider..."</div>
-            <video id="video-cakir" src="video1.mp4"></video>
+            <video id="video-cakir" src="racon_cakir.mp4" playsinline></video>
         </div>
-        <button class="btn-racon" onclick="videoBaslat('cakir')">RACON KES</button>
+        <button id="btn-cakir" class="btn-racon" onclick="videoBaslat('cakir')">RACON KES</button>
     </div>
 
-    <!-- ALEMDAR EKRANI -->
-    <div id="ekran-alemdar" class="screen">
-        <h1 class="baslik">Enes Alemdar</h1>
+    <div id="ekran-polat" class="screen diger-ekran">
+        <div class="overlay"></div>
+        <h1 style="color:#b22222; font-size: 3rem;">Enes Alemdar</h1>
         <div class="video-container">
-            <div id="yazi-alemdar" class="yan-yazi">"Racon kesmiyorum, kafa kesiyorum!"</div>
-            <video id="video-alemdar" src="video2.mp4"></video>
+            <div id="yazi-polat" class="yan-yazi">"Ben Polat Alemdar'ım!"</div>
+            <video id="video-polat" src="ben_polat_alemdarim.mp4" playsinline></video>
         </div>
-        <button class="btn-racon" onclick="videoBaslat('alemdar')">RACON KES</button>
+        <button id="btn-polat" class="btn-racon" onclick="videoBaslat('polat')">RACON KES</button>
     </div>
 
-    <!-- AKBEY EKRANI -->
-    <div id="ekran-akbey" class="screen">
-        <h1 class="baslik">Enes Akbey</h1>
+    <div id="ekran-akbey" class="screen diger-ekran">
+        <div class="overlay"></div>
+        <h1 style="color:#b22222; font-size: 3rem;">Enes Akbey</h1>
         <div class="video-container">
-            <div id="yazi-akbey" class="yan-yazi">"Siz sefirlik için doğmuşsunuz Enes Bey..."</div>
-            <video id="video-akbey" src="video3.mp4"></video>
+            <div id="yazi-akbey" class="yan-yazi">"İki kişinin bildiği sır değildir."</div>
+            <video id="video-akbey" src="3_2.mp4" playsinline></video>
         </div>
-        <button class="btn-racon" onclick="videoBaslat('akbey')">RACON KES</button>
+        <button id="btn-akbey" class="btn-racon" onclick="videoBaslat('akbey')">RACON KES</button>
     </div>
 
-    <!-- MEMATİ EKRANI -->
-    <div id="ekran-memati" class="screen">
-        <h1 class="baslik">Enes (Memati)</h1>
+    <div id="ekran-memati" class="screen diger-ekran">
+        <div class="overlay"></div>
+        <h1 style="color:#b22222; font-size: 3rem;">Enes Memati</h1>
         <div class="video-container">
-            <div id="yazi-memati" class="yan-yazi">"Seni doğuran ananın ellerinden öperim."</div>
-            <video id="video-memati" src="video4.mp4"></video>
+            <div id="yazi-memati" class="yan-yazi">"Kalk ulan kalk!"</div>
+            <video id="video-memati" src="kalk.mp4" playsinline></video>
         </div>
-        <button class="btn-racon" onclick="videoBaslat('memati')">RACON KES</button>
+        <button id="btn-memati" class="btn-racon" onclick="videoBaslat('memati')">RACON KES</button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- EKRAN 3: ORTAK FİNAL VE KUTLAMA KARTI -->
-    <!-- ========================================== -->
-    <div id="ekran-final" class="screen">
-        <img src="seyfo_erhan.jpg" alt="Final Foto" class="final-img">
-        <button id="final-btn" class="btn-racon" onclick="finalRaconuKes()">RACON KES</button>
+    <div id="ekran-final" class="screen diger-ekran">
+        <div class="overlay"></div>
+        <h1 style="color:#b22222; font-size: 3rem;">Büyük Final</h1>
+        
+        <video id="final-video" src="son_video.mp4" playsinline></video>
+        <button id="final-btn" class="btn-racon" onclick="finalVideosuBaslat()">RACON KES</button>
 
         <div id="dogumGunuKarti">
             <h2>İyi ki varsın, iyi ki doğdun Enes!</h2>
             <h2 style="color: #b22222;">Yeni yaşın kutlu, Raconun bol olsun.</h2>
-            <img src="silah.png" alt="Silah" class="silah-icon">
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT KODLARI (Mantık ve İşleyiş) -->
-    <!-- ========================================== -->
     <script>
-        // Ekran Değiştirme Fonksiyonu
         function ekraniDegistir(gizlenecekId, gosterilecekId) {
             document.getElementById(gizlenecekId).classList.remove('active');
             document.getElementById(gosterilecekId).classList.add('active');
         }
 
-        // 1. Aşama: İlk Racon ve Arka Plan Müziği Başlangıcı
+        // 1. Aşama: İlk Racon ve Pusu Müziği
         function baslangicRaconuKes() {
-            // Vadi müziğini başlat ve sesini biraz kıs (konuşmalar anlaşılsın diye)
+            // Pusu müziğini başlat
             let fonMuzigi = document.getElementById('vadiMuzigi');
-            fonMuzigi.volume = 0.3; 
+            fonMuzigi.volume = 0.4; 
             fonMuzigi.play();
 
-            // 1. Sesi Çal
-            let ses1 = document.getElementById('ses1');
-            ses1.play();
+            // İlk sesi çal (babayigit.mp3)
+            let sesIlk = document.getElementById('sesIlk');
+            sesIlk.play();
 
             // Ses bitince karakter seçim ekranına geç
-            ses1.onended = function() {
+            sesIlk.onended = function() {
                 ekraniDegistir('ekran-giris', 'ekran-karakterler');
             };
+            
+            // Eğer dosya yüklenmediyse beklemeden geçmesi için yedek zamanlayıcı (4 saniye)
+            setTimeout(function() {
+                if(document.getElementById('ekran-giris').classList.contains('active')) {
+                    ekraniDegistir('ekran-giris', 'ekran-karakterler');
+                }
+            }, 4000);
         }
 
         // 2. Aşama: Karakter Seçimi
-        function karakterSec(karakterAdi, sesId) {
-            let secilenSes = document.getElementById(sesId);
-            secilenSes.play();
-            
-            // Sesi çaldığı anda o karakterin özel sayfasına geç
+        function karakterSec(karakterAdi) {
+            // Seçilen karakterin ekranına geç
             ekraniDegistir('ekran-karakterler', 'ekran-' + karakterAdi);
         }
 
@@ -256,29 +269,37 @@
         function videoBaslat(karakterAdi) {
             let video = document.getElementById('video-' + karakterAdi);
             let yazi = document.getElementById('yazi-' + karakterAdi);
+            let buton = document.getElementById('btn-' + karakterAdi);
             
-            // Yazıyı göster ve videoyu oynat
+            // Butonu gizle, videoyu ve yazıyı göster
+            buton.style.display = "none";
+            video.style.display = "block";
             yazi.style.display = "block";
+            
+            // Videonun sesini aç ve oynat
+            video.volume = 1.0;
             video.play();
 
-            // Video bitince 2 saniye bekle ve Ortak Final ekranına at
+            // Video bitince 1.5 saniye bekle ve Final ekranına at
             video.onended = function() {
                 setTimeout(function() {
                     ekraniDegistir('ekran-' + karakterAdi, 'ekran-final');
-                }, 2000); // 2000 milisaniye = 2 saniye bekleme
+                }, 1500); 
             };
         }
 
-        // 4. Aşama: Final Raconu ve Doğum Günü Kartı
-        function finalRaconuKes() {
-            // Butonu gizle ki bir daha basılmasın
-            document.getElementById('final-btn').style.display = "none";
-            
-            let finalSesi = document.getElementById('sesFinal');
-            finalSesi.play();
+        // 4. Aşama: Son Video ve Doğum Günü Kartı
+        function finalVideosuBaslat() {
+            let finalBtn = document.getElementById('final-btn');
+            let finalVideo = document.getElementById('final-video');
 
-            // Ses bitince doğum günü kartını ortaya çıkar
-            finalSesi.onended = function() {
+            // Butonu gizle, videoyu göster ve oynat
+            finalBtn.style.display = "none";
+            finalVideo.style.display = "block";
+            finalVideo.play();
+
+            // Son video bitince doğum günü kartını ortaya çıkar
+            finalVideo.onended = function() {
                 document.getElementById('dogumGunuKarti').style.display = "block";
             };
         }
