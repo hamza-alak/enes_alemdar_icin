@@ -2,17 +2,25 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta property="og:title" content="Alemde Şer, Vadide Doğum Günü! 🎁">
+    <meta property="og:description" content="Raconu kesmek için dokun...">
+    
     <title>Kurtlar Vadisi - Doğum Günü</title>
+    
     <style>
         /* GENEL AYARLAR */
         body {
             margin: 0;
             padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #d4d4d4;
             font-family: 'Times New Roman', Times, serif;
-            background-color: #050505;
-            color: #fff;
             overflow: hidden;
+            background-color: #050505;
         }
 
         /* SİNEMATİK EKRAN YÖNETİMİ */
@@ -31,17 +39,18 @@
             z-index: 1;
         }
         
-        /* Filmlerdeki gibi yavaş ve yumuşak açılış */
+        /* Ağır ve profesyonel ekran girişi */
         .active {
             display: flex; 
-            animation: sinematikGecis 1.5s ease-out forwards;
+            animation: sinematikGecis 1s ease-out forwards;
         }
 
         @keyframes sinematikGecis {
-            0% { opacity: 0; filter: blur(10px); transform: scale(1.02); }
+            0% { opacity: 0; filter: blur(5px); transform: scale(1.02); }
             100% { opacity: 1; filter: blur(0); transform: scale(1); }
         }
 
+        /* Arka Planlar */
         #ekran-giris { background-image: url('kurtlar_vadisi_ilk_arkaplan.png'); }
         .diger-ekran { background-image: url('kurtlar_vadisi_arkaplan.jpg'); }
 
@@ -108,10 +117,16 @@
             z-index: 5;
             filter: drop-shadow(-10px 10px 20px rgba(0,0,0,0.9)); 
             pointer-events: none; 
+            animation: palaNefes 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes palaNefes {
+            0% { transform: scale(1) translateY(0); }
+            100% { transform: scale(1.02) translateY(-5px); }
         }
 
         /* ========================================== */
-        /* SİNEMATİK KARAKTER SEÇİMİ                  */
+        /* KARAKTER SEÇİMİ                            */
         /* ========================================== */
         .char-list { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 450px; margin-top: 20px; z-index: 10;}
         .char-btn {
@@ -125,7 +140,7 @@
         .char-btn:hover { 
             background: rgba(50, 0, 0, 0.8);
             border-color: #8b0000;
-            padding-left: 25px; /* Üzerine gelince yumuşakça sağa kayar */
+            padding-left: 25px; 
         }
         .char-btn img { 
             width: 80px; 
@@ -153,11 +168,11 @@
             display: none; 
             text-shadow: 2px 2px 5px #000;
             letter-spacing: 1px;
-            animation: sinematikGecis 2s ease-out forwards;
         }
 
         /* FİNAL EKRANI VE SİNEMATİK MESAJ KUTUSU */
         #final-video { width: 700px; max-width: 100%; border: 1px solid #3a0000; display: block; box-shadow: 0 0 40px rgba(0,0,0,0.9); z-index: 10;}
+        #extra-video { display: none; width: 700px; max-width: 100%; border: 1px solid #3a0000; box-shadow: 0 0 40px rgba(0,0,0,0.9); z-index: 10;}
         #video-kahkaha { display: none; width: 700px; max-width: 100%; border: 1px solid #3a0000; box-shadow: 0 0 40px rgba(0,0,0,0.9); z-index: 10;}
         
         #dogumGunuKarti {
@@ -177,7 +192,6 @@
             font-weight: normal;
             text-shadow: 0 0 15px rgba(255,255,255,0.3); 
             letter-spacing: 3px;
-            animation: sinematikGecis 3s ease-out forwards;
         }
     </style>
 </head>
@@ -263,6 +277,8 @@
         <div class="overlay"></div>
         
         <video id="final-video" src="son_video.mp4" playsinline preload="auto"></video>
+        <video id="extra-video" src="dogum1.mp4" playsinline preload="auto"></video>
+
         <button id="final-btn" class="btn-racon" onclick="finalVideosuBaslat()">RACON KES</button>
 
         <div id="dogumGunuKarti">
@@ -278,7 +294,7 @@
             document.getElementById(gizlenecekId).classList.remove('active');
             setTimeout(() => {
                 document.getElementById(gosterilecekId).classList.add('active');
-            }, 100); // 100ms ufak bir nefes payı
+            }, 100); 
         }
 
         // 1. Aşama
@@ -329,15 +345,27 @@
         function finalVideosuBaslat() {
             let finalBtn = document.getElementById('final-btn');
             let finalVideo = document.getElementById('final-video');
+            let extraVideo = document.getElementById('extra-video'); // Yeni video referansı
             let kart = document.getElementById('dogumGunuKarti');
             let kahkahaVideo = document.getElementById('video-kahkaha');
 
             finalBtn.style.display = "none";
             finalVideo.play();
 
+            // son_video.mp4 bittiğinde
             finalVideo.onended = function() {
-                // Video bitince ekrandan kaybolur, yerine yazı gelir
+                // son_video.mp4'ü gizle
                 finalVideo.style.display = "none";
+                // dogum1.mp4'ü göster ve oynat
+                extraVideo.style.display = "block";
+                extraVideo.play();
+            };
+
+            // dogum1.mp4 bittiğinde
+            extraVideo.onended = function() {
+                // dogum1.mp4'ü gizle
+                extraVideo.style.display = "none";
+                // Doğum günü kartını göster
                 kart.style.display = "flex";
 
                 // Yazı 10 saniye ekranda kalır, sonra kahkaha videosu başlar
