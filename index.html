@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- WhatsApp Önizleme Ayarları -->
+    <meta property="og:title" content="Alemde Şer, Vadide Doğum Günü! 🐺">
+    <meta property="og:description" content="Raconu kesmek için dokun...">
+    
+    <title>Kurtlar Vadisi - Doğum Günü</title>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #050505; /* Vadi Karanlığı */
+            color: #d4d4d4;
+            font-family: 'Times New Roman', Times, serif; /* Klasik, ağır bir font */
+            overflow: hidden;
+            background-image: radial-gradient(circle, #1a0000 0%, #000000 80%);
+        }
+
+        .konsey-masasi {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 2px solid #5e0000; /* Kan kırmızısı çerçeve */
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.4);
+            padding: 40px 30px;
+            text-align: center;
+            width: 85%;
+            max-width: 400px;
+            border-radius: 5px;
+        }
+
+        h1 {
+            color: #b22222;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-bottom: 1px solid #5e0000;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        p {
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #a0a0a0;
+        }
+
+        .vadi-soz {
+            color: #d4d4d4;
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        .btn {
+            background-color: #5e0000;
+            color: white;
+            border: 1px solid #8b0000;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            background-color: #8b0000;
+        }
+
+        /* Başlangıçta gizli olacak mesaj alanı */
+        #gizliDosya {
+            display: none;
+            animation: fadeIn 2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; filter: blur(5px); }
+            to { opacity: 1; filter: blur(0); }
+        }
+
+        .imza {
+            color: #b22222;
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="konsey-masasi" id="giris">
+        <h1>Konsey Toplandı 🕴️</h1>
+        <p>"İki kişinin bildiği sır değildir.<br>Ama bugünün senin doğum günün olduğunu tüm alem bilecek."</p>
+        <button class="btn" onclick="raconuKes()">Raconu Kes</button>
+    </div>
+
+    <!-- Tıkladıktan Sonra Açılacak Ekran -->
+    <div class="konsey-masasi" id="gizliDosya">
+        <h1>İyi Ki Doğdun Abi</h1>
+        <p class="vadi-soz">"Azdan az, çoktan çok gider ama benim abimden hiçbir şey gitmez!"</p>
+        <p>Doğum günün kutlu olsun. Senin gibi bir abiye sahip olduğum için vadinin en şanslı adamıyım. Daha nice yaşlara, her zaman omuz omuzayız.</p>
+        <div class="imza">🐺 Kardeşin</div>
+        
+        <!-- Cendere veya Jenerik müziği eklenecek kısım -->
+        <audio id="vadiMuzigi" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        function raconuKes() {
+            // Giriş ekranını kapat, mesajı aç
+            document.getElementById('giris').style.display = 'none';
+            document.getElementById('gizliDosya').style.display = 'block';
+
+            // Müziği başlat (Tıklama ile tetiklendiği için tarayıcı engellemez)
+            var muzik = document.getElementById('vadiMuzigi');
+            muzik.play();
+            muzik.volume = 0.7; // Ses seviyesi
+        }
+    </script>
+</body>
+</html>
