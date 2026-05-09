@@ -37,9 +37,10 @@
             background-attachment: fixed;
             position: relative;
             z-index: 1;
+            width: 100%;
+            box-sizing: border-box;
         }
         
-        /* Ağır ve profesyonel ekran girişi */
         .active {
             display: flex; 
             animation: sinematikGecis 1s ease-out forwards;
@@ -50,7 +51,6 @@
             100% { opacity: 1; filter: blur(0); transform: scale(1); }
         }
 
-        /* Arka Planlar */
         #ekran-giris { background-image: url('kurtlar_vadisi_ilk_arkaplan.png'); }
         .diger-ekran { background-image: url('kurtlar_vadisi_arkaplan.jpg'); }
 
@@ -61,7 +61,7 @@
             z-index: -1;
         }
 
-        /* AĞIR VE KLASİK BUTON TASARIMI */
+        /* BUTON TASARIMI */
         .btn-racon {
             background: rgba(94, 0, 0, 0.8);
             color: white;
@@ -77,7 +77,8 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             transition: all 0.5s ease;
-            z-index: 5;
+            z-index: 15;
+            position: relative;
         }
         
         .btn-racon:hover {
@@ -87,7 +88,7 @@
         }
 
         /* ========================================== */
-        /* PALA TAM SAĞ ALT KÖŞEDE                    */
+        /* MASAÜSTÜ: PALA VE YAZI HİZALAMASI          */
         /* ========================================== */
         .giris-icerik {
             display: flex;
@@ -95,7 +96,8 @@
             height: 100%;
             align-items: center;
             justify-content: flex-start; 
-            padding-left: 10%; 
+            padding-left: 15%; /* Yazı biraz daha merkeze çekildi */
+            z-index: 10;
         }
 
         .baslik-kutu { text-align: left; z-index: 10; }
@@ -110,9 +112,9 @@
 
         .pala-sabit {
             position: absolute;
-            right: 0;
-            bottom: 0;
-            height: 75vh; 
+            right: -5%; /* Pala ekranın en sağına itildi */
+            bottom: -5%;
+            height: 80vh; 
             object-fit: contain;
             z-index: 5;
             filter: drop-shadow(-10px 10px 20px rgba(0,0,0,0.9)); 
@@ -125,9 +127,7 @@
             100% { transform: scale(1.02) translateY(-5px); }
         }
 
-        /* ========================================== */
-        /* KARAKTER SEÇİMİ                            */
-        /* ========================================== */
+        /* KARAKTER SEÇİMİ */
         .char-list { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 450px; margin-top: 20px; z-index: 10;}
         .char-btn {
             display: flex; align-items: center; gap: 25px;
@@ -171,9 +171,10 @@
         }
 
         /* FİNAL EKRANI VE SİNEMATİK MESAJ KUTUSU */
-        #final-video { width: 700px; max-width: 100%; border: 1px solid #3a0000; display: block; box-shadow: 0 0 40px rgba(0,0,0,0.9); z-index: 10;}
-        #extra-video { display: none; width: 700px; max-width: 100%; border: 1px solid #3a0000; box-shadow: 0 0 40px rgba(0,0,0,0.9); z-index: 10;}
-        #video-kahkaha { display: none; width: 700px; max-width: 100%; border: 1px solid #3a0000; box-shadow: 0 0 40px rgba(0,0,0,0.9); z-index: 10;}
+        #final-video, #extra-video, #video-kahkaha { 
+            width: 700px; max-width: 100%; border: 1px solid #3a0000; box-shadow: 0 0 40px rgba(0,0,0,0.9); z-index: 10;
+        }
+        #extra-video, #video-kahkaha { display: none; }
         
         #dogumGunuKarti {
             display: none; 
@@ -192,6 +193,52 @@
             font-weight: normal;
             text-shadow: 0 0 15px rgba(255,255,255,0.3); 
             letter-spacing: 3px;
+        }
+
+        /* ========================================== */
+        /* MOBİL UYUM (TELEFON EKRANLARI İÇİN)        */
+        /* ========================================== */
+        @media (max-width: 768px) {
+            .screen {
+                background-attachment: scroll; /* Mobildeki arka plan bozulmasını önler */
+                background-position: top center;
+                padding: 10px;
+            }
+            .giris-icerik {
+                padding-left: 0;
+                justify-content: center;
+                align-items: flex-start; /* Mobilde yazıyı yukarı iter */
+                padding-top: 10vh;
+            }
+            .baslik-kutu {
+                text-align: center;
+            }
+            .sinematik-baslik {
+                font-size: 2.2rem;
+            }
+            .pala-sabit {
+                height: 45vh; /* Pala'yı telefon ekranına sığacak kadar küçültür */
+                right: -10px;
+                bottom: -10px;
+            }
+            .char-btn img {
+                width: 60px;
+                height: 60px;
+            }
+            .char-btn h3 {
+                font-size: 22px;
+            }
+            video, #final-video, #extra-video, #video-kahkaha {
+                width: 95%; /* Videoların telefondan taşmasını engeller */
+            }
+            .yan-yazi {
+                font-size: 20px;
+            }
+            #dogumGunuKarti h2 {
+                font-size: 24px;
+                text-align: center;
+                padding: 0 20px;
+            }
         }
     </style>
 </head>
@@ -215,7 +262,7 @@
 
     <div id="ekran-karakterler" class="screen diger-ekran">
         <div class="overlay"></div>
-        <h1 class="sinematik-baslik" style="font-size: 3.5rem;">Karakter Seç</h1>
+        <h1 class="sinematik-baslik">Karakter Seç</h1>
         
         <div class="char-list">
             <div class="char-btn" onclick="karakterSec('cakir')">
@@ -289,7 +336,6 @@
     </div>
 
     <script>
-        // Yumuşak Ekran Geçişi
         function ekraniDegistir(gizlenecekId, gosterilecekId) {
             document.getElementById(gizlenecekId).classList.remove('active');
             setTimeout(() => {
@@ -297,7 +343,6 @@
             }, 100); 
         }
 
-        // 1. Aşama
         function baslangicRaconuKes() {
             let fonMuzigi = document.getElementById('vadiMuzigi');
             fonMuzigi.volume = 0.4; 
@@ -317,12 +362,10 @@
             }, 5000);
         }
 
-        // 2. Aşama
         function karakterSec(karakterAdi) {
             ekraniDegistir('ekran-karakterler', 'ekran-' + karakterAdi);
         }
 
-        // 3. Aşama
         function videoBaslat(karakterAdi) {
             let video = document.getElementById('video-' + karakterAdi);
             let yazi = document.getElementById('yazi-' + karakterAdi);
@@ -341,34 +384,26 @@
             };
         }
 
-        // 4. Aşama (Sinematik Final Kurgusu)
         function finalVideosuBaslat() {
             let finalBtn = document.getElementById('final-btn');
             let finalVideo = document.getElementById('final-video');
-            let extraVideo = document.getElementById('extra-video'); // Yeni video referansı
+            let extraVideo = document.getElementById('extra-video'); 
             let kart = document.getElementById('dogumGunuKarti');
             let kahkahaVideo = document.getElementById('video-kahkaha');
 
             finalBtn.style.display = "none";
             finalVideo.play();
 
-            // son_video.mp4 bittiğinde
             finalVideo.onended = function() {
-                // son_video.mp4'ü gizle
                 finalVideo.style.display = "none";
-                // dogum1.mp4'ü göster ve oynat
                 extraVideo.style.display = "block";
                 extraVideo.play();
             };
 
-            // dogum1.mp4 bittiğinde
             extraVideo.onended = function() {
-                // dogum1.mp4'ü gizle
                 extraVideo.style.display = "none";
-                // Doğum günü kartını göster
                 kart.style.display = "flex";
 
-                // Yazı 10 saniye ekranda kalır, sonra kahkaha videosu başlar
                 setTimeout(function() {
                     kart.style.display = "none";
                     kahkahaVideo.style.display = "block";
