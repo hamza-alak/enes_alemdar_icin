@@ -2,135 +2,285 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- WhatsApp Önizleme Ayarları -->
-    <meta property="og:title" content="Alemde Şer, Vadide Doğum Günü! 🐺">
-    <meta property="og:description" content="Raconu kesmek için dokun...">
-    
-    <title>Kurtlar Vadisi - Doğum Günü</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kürtler Vadisi - Doğum Günü</title>
     <style>
+        /* GENEL AYARLAR VE VADİ TEMASI */
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #050505; /* Vadi Karanlığı */
-            color: #d4d4d4;
-            font-family: 'Times New Roman', Times, serif; /* Klasik, ağır bir font */
-            overflow: hidden;
-            background-image: radial-gradient(circle, #1a0000 0%, #000000 80%);
-        }
-
-        .konsey-masasi {
-            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
-            border: 2px solid #5e0000; /* Kan kırmızısı çerçeve */
-            box-shadow: 0 0 30px rgba(139, 0, 0, 0.4);
-            padding: 40px 30px;
-            text-align: center;
-            width: 85%;
-            max-width: 400px;
-            border-radius: 5px;
-        }
-
-        h1 {
-            color: #b22222;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            border-bottom: 1px solid #5e0000;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            font-size: 24px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-        }
-
-        p {
-            font-size: 17px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            font-style: italic;
-            color: #a0a0a0;
-        }
-
-        .vadi-soz {
-            color: #d4d4d4;
-            font-weight: bold;
-            font-style: normal;
-        }
-
-        .btn {
-            background-color: #5e0000;
-            color: white;
-            border: 1px solid #8b0000;
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            letter-spacing: 1px;
-            margin-top: 15px;
-            transition: all 0.3s ease;
             font-family: 'Times New Roman', Times, serif;
+            background-color: #050505;
+            color: #fff;
+            overflow-x: hidden;
+            /* Ortak Arka Plan Resmi */
+            background-image: url('arkaplan.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
-        .btn:active {
-            transform: scale(0.95);
-            background-color: #8b0000;
+        /* Arka planı biraz karartmak için tül */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
         }
 
-        /* Başlangıçta gizli olacak mesaj alanı */
-        #gizliDosya {
-            display: none;
-            animation: fadeIn 2s;
+        /* EKRAN YÖNETİMİ */
+        .screen {
+            display: none; /* Varsayılan olarak tüm ekranlar gizli */
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .active {
+            display: flex; /* Sadece aktif ekran görünür */
+            animation: fadeIn 1s;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; filter: blur(5px); }
-            to { opacity: 1; filter: blur(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .imza {
-            color: #b22222;
-            margin-top: 30px;
+        /* ORTAK BUTON TASARIMI */
+        .btn-racon {
+            background-color: #5e0000;
+            color: white;
+            border: 2px solid #8b0000;
+            padding: 15px 35px;
+            font-size: 20px;
             font-weight: bold;
-            font-size: 18px;
-            text-transform: uppercase;
+            font-family: 'Times New Roman', Times, serif;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.5);
+            transition: all 0.3s;
         }
+        .btn-racon:active { transform: scale(0.95); }
+
+        /* EKRAN 1: GİRİŞ */
+        .baslik { font-size: 3rem; color: #b22222; text-shadow: 2px 2px 4px #000; margin-bottom: 10px; }
+        .alt-baslik { font-size: 2rem; color: #ccc; margin-bottom: 20px; }
+        .pala-img { max-width: 200px; border-radius: 10px; border: 2px solid #5e0000; }
+
+        /* EKRAN 2: KARAKTER SEÇİMİ */
+        .char-list { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
+        .char-btn {
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #5e0000;
+            padding: 10px; cursor: pointer; border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .char-btn:hover { background: rgba(94, 0, 0, 0.5); }
+        .char-btn img { width: 80px; height: 80px; object-fit: cover; border-radius: 50%; }
+        .char-btn h3 { margin: 0; font-size: 24px; color: #fff; }
+
+        /* VİDEO EKRANLARI */
+        .video-container {
+            display: flex; flex-direction: row; align-items: center; justify-content: center;
+            gap: 30px; margin-bottom: 20px; max-width: 800px;
+            flex-wrap: wrap; /* Mobilde alt alta geçmesi için */
+        }
+        video { max-width: 100%; width: 400px; border: 3px solid #5e0000; border-radius: 10px; }
+        .yan-yazi {
+            font-size: 24px; font-style: italic; color: #b22222;
+            display: none; /* Butona basana kadar gizli */
+            max-width: 300px; text-shadow: 1px 1px 3px #000;
+        }
+
+        /* EKRAN 3: FİNAL VE DOĞUM GÜNÜ KARTI */
+        .final-img { max-width: 300px; border: 3px solid #5e0000; border-radius: 10px; margin-bottom: 20px; }
+        #dogumGunuKarti {
+            display: none; /* Ses bitene kadar gizli */
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #b22222;
+            padding: 40px; margin-top: 30px; border-radius: 15px;
+            box-shadow: 0 0 30px rgba(178, 34, 34, 0.6);
+        }
+        #dogumGunuKarti h2 { color: #fff; font-size: 28px; }
+        .silah-icon { width: 100px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="konsey-masasi" id="giris">
-        <h1>Konsey Toplandı 🕴️</h1>
-        <p>"İki kişinin bildiği sır değildir.<br>Ama bugünün senin doğum günün olduğunu tüm alem bilecek."</p>
-        <button class="btn" onclick="raconuKes()">Raconu Kes</button>
+    <!-- Arka Plan Siyah Tülü -->
+    <div class="overlay"></div>
+
+    <!-- SES DOSYALARI (Gizli) -->
+    <audio id="vadiMuzigi" src="vadi_muzik.mp3" loop></audio>
+    <audio id="ses1" src="ses1.mp3"></audio>
+    <audio id="ses2" src="ses2.mp3"></audio> <!-- Çakır -->
+    <audio id="ses3" src="ses3.mp3"></audio> <!-- Alemdar -->
+    <audio id="ses4" src="ses4.mp3"></audio> <!-- Akbey -->
+    <audio id="ses5" src="ses5.mp3"></audio> <!-- Memati -->
+    <audio id="sesFinal" src="ses6.mp3"></audio> <!-- Final Sesi -->
+
+    <!-- ========================================== -->
+    <!-- EKRAN 1: GİRİŞ -->
+    <!-- ========================================== -->
+    <div id="ekran-giris" class="screen active">
+        <h1 class="baslik">Kürtler Vadisi</h1>
+        <img src="pala.jpg" alt="Pala" class="pala-img">
+        <h2 class="alt-baslik">Hoşgeldin Babayiğit</h2>
+        <button class="btn-racon" onclick="baslangicRaconuKes()">RACON KES</button>
     </div>
 
-    <!-- Tıkladıktan Sonra Açılacak Ekran -->
-    <div class="konsey-masasi" id="gizliDosya">
-        <h1>İyi Ki Doğdun Abi</h1>
-        <p class="vadi-soz">"Azdan az, çoktan çok gider ama benim abimden hiçbir şey gitmez!"</p>
-        <p>Doğum günün kutlu olsun. Senin gibi bir abiye sahip olduğum için vadinin en şanslı adamıyım. Daha nice yaşlara, her zaman omuz omuzayız.</p>
-        <div class="imza">🐺 Kardeşin</div>
-        
-        <!-- Cendere veya Jenerik müziği eklenecek kısım -->
-        <audio id="vadiMuzigi" loop>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-        </audio>
+    <!-- ========================================== -->
+    <!-- EKRAN 2: KARAKTER SEÇİMİ -->
+    <!-- ========================================== -->
+    <div id="ekran-karakterler" class="screen">
+        <h1 class="baslik">Karakter Seç</h1>
+        <div class="char-list">
+            <div class="char-btn" onclick="karakterSec('cakir', 'ses2')">
+                <img src="cakir.jpg" alt="Çakır">
+                <h3>Enes Çakır</h3>
+            </div>
+            <div class="char-btn" onclick="karakterSec('alemdar', 'ses3')">
+                <img src="polat.jpg" alt="Alemdar">
+                <h3>Enes Alemdar</h3>
+            </div>
+            <div class="char-btn" onclick="karakterSec('akbey', 'ses4')">
+                <img src="aslan.jpg" alt="Akbey">
+                <h3>Enes Akbey</h3>
+            </div>
+            <div class="char-btn" onclick="karakterSec('memati', 'ses5')">
+                <img src="memati.jpg" alt="Memati">
+                <h3>Enes (Memati)</h3>
+            </div>
+        </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- KARAKTER EKRANLARI (DİNAMİK) -->
+    <!-- ========================================== -->
+    
+    <!-- ÇAKIR EKRANI -->
+    <div id="ekran-cakir" class="screen">
+        <h1 class="baslik">Enes Çakır</h1>
+        <div class="video-container">
+            <div id="yazi-cakir" class="yan-yazi">"Azdan az, çoktan çok gider..."</div>
+            <video id="video-cakir" src="video1.mp4"></video>
+        </div>
+        <button class="btn-racon" onclick="videoBaslat('cakir')">RACON KES</button>
+    </div>
+
+    <!-- ALEMDAR EKRANI -->
+    <div id="ekran-alemdar" class="screen">
+        <h1 class="baslik">Enes Alemdar</h1>
+        <div class="video-container">
+            <div id="yazi-alemdar" class="yan-yazi">"Racon kesmiyorum, kafa kesiyorum!"</div>
+            <video id="video-alemdar" src="video2.mp4"></video>
+        </div>
+        <button class="btn-racon" onclick="videoBaslat('alemdar')">RACON KES</button>
+    </div>
+
+    <!-- AKBEY EKRANI -->
+    <div id="ekran-akbey" class="screen">
+        <h1 class="baslik">Enes Akbey</h1>
+        <div class="video-container">
+            <div id="yazi-akbey" class="yan-yazi">"Siz sefirlik için doğmuşsunuz Enes Bey..."</div>
+            <video id="video-akbey" src="video3.mp4"></video>
+        </div>
+        <button class="btn-racon" onclick="videoBaslat('akbey')">RACON KES</button>
+    </div>
+
+    <!-- MEMATİ EKRANI -->
+    <div id="ekran-memati" class="screen">
+        <h1 class="baslik">Enes (Memati)</h1>
+        <div class="video-container">
+            <div id="yazi-memati" class="yan-yazi">"Seni doğuran ananın ellerinden öperim."</div>
+            <video id="video-memati" src="video4.mp4"></video>
+        </div>
+        <button class="btn-racon" onclick="videoBaslat('memati')">RACON KES</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- EKRAN 3: ORTAK FİNAL VE KUTLAMA KARTI -->
+    <!-- ========================================== -->
+    <div id="ekran-final" class="screen">
+        <img src="seyfo_erhan.jpg" alt="Final Foto" class="final-img">
+        <button id="final-btn" class="btn-racon" onclick="finalRaconuKes()">RACON KES</button>
+
+        <div id="dogumGunuKarti">
+            <h2>İyi ki varsın, iyi ki doğdun Enes!</h2>
+            <h2 style="color: #b22222;">Yeni yaşın kutlu, Raconun bol olsun.</h2>
+            <img src="silah.png" alt="Silah" class="silah-icon">
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT KODLARI (Mantık ve İşleyiş) -->
+    <!-- ========================================== -->
     <script>
-        function raconuKes() {
-            // Giriş ekranını kapat, mesajı aç
-            document.getElementById('giris').style.display = 'none';
-            document.getElementById('gizliDosya').style.display = 'block';
+        // Ekran Değiştirme Fonksiyonu
+        function ekraniDegistir(gizlenecekId, gosterilecekId) {
+            document.getElementById(gizlenecekId).classList.remove('active');
+            document.getElementById(gosterilecekId).classList.add('active');
+        }
 
-            // Müziği başlat (Tıklama ile tetiklendiği için tarayıcı engellemez)
-            var muzik = document.getElementById('vadiMuzigi');
-            muzik.play();
-            muzik.volume = 0.7; // Ses seviyesi
+        // 1. Aşama: İlk Racon ve Arka Plan Müziği Başlangıcı
+        function baslangicRaconuKes() {
+            // Vadi müziğini başlat ve sesini biraz kıs (konuşmalar anlaşılsın diye)
+            let fonMuzigi = document.getElementById('vadiMuzigi');
+            fonMuzigi.volume = 0.3; 
+            fonMuzigi.play();
+
+            // 1. Sesi Çal
+            let ses1 = document.getElementById('ses1');
+            ses1.play();
+
+            // Ses bitince karakter seçim ekranına geç
+            ses1.onended = function() {
+                ekraniDegistir('ekran-giris', 'ekran-karakterler');
+            };
+        }
+
+        // 2. Aşama: Karakter Seçimi
+        function karakterSec(karakterAdi, sesId) {
+            let secilenSes = document.getElementById(sesId);
+            secilenSes.play();
+            
+            // Sesi çaldığı anda o karakterin özel sayfasına geç
+            ekraniDegistir('ekran-karakterler', 'ekran-' + karakterAdi);
+        }
+
+        // 3. Aşama: Karakter Ekranı Video Oynatma
+        function videoBaslat(karakterAdi) {
+            let video = document.getElementById('video-' + karakterAdi);
+            let yazi = document.getElementById('yazi-' + karakterAdi);
+            
+            // Yazıyı göster ve videoyu oynat
+            yazi.style.display = "block";
+            video.play();
+
+            // Video bitince 2 saniye bekle ve Ortak Final ekranına at
+            video.onended = function() {
+                setTimeout(function() {
+                    ekraniDegistir('ekran-' + karakterAdi, 'ekran-final');
+                }, 2000); // 2000 milisaniye = 2 saniye bekleme
+            };
+        }
+
+        // 4. Aşama: Final Raconu ve Doğum Günü Kartı
+        function finalRaconuKes() {
+            // Butonu gizle ki bir daha basılmasın
+            document.getElementById('final-btn').style.display = "none";
+            
+            let finalSesi = document.getElementById('sesFinal');
+            finalSesi.play();
+
+            // Ses bitince doğum günü kartını ortaya çıkar
+            finalSesi.onended = function() {
+                document.getElementById('dogumGunuKarti').style.display = "block";
+            };
         }
     </script>
 </body>
