@@ -149,6 +149,7 @@
        100% { transform:translateX(calc(var(--dr)*1.6))    translateY(-102vh) scale(.1);  opacity:0;   }
     }
 
+    /* ─── Z-INDEX KATMANI ──────────────────────────────────── */
     .z2 { position:relative; z-index:2; }
 
     /* ─── GİRİŞ EKRANI ─────────────────────────────────────── */
@@ -374,7 +375,6 @@
     <div class="vinyet"></div>
     <div class="bar bar-top"></div>
     <div class="bar bar-bottom"></div>
-
     <div id="eq"></div>
 
     <audio id="vadiMuzigi" src="pusu_muzik.mp3" loop preload="auto"></audio>
@@ -383,7 +383,6 @@
     <div id="ekran-giris" class="screen active">
         <div class="overlay"></div>
         <div class="ewrap" id="em1"></div>
-
         <div class="giris-wrap">
             <div class="baslik-kutu">
                 <p class="etiket">&#9632; Kurtlar Vadisi &#9632;</p>
@@ -393,7 +392,6 @@
                 <button class="btn-racon" onclick="baslangicRaconuKes(this)">&#9654;&nbsp;RACON KES</button>
             </div>
         </div>
-
         <img src="pala.png" alt="Pala" class="pala">
     </div>
 
@@ -478,6 +476,9 @@
     </div>
 
     <script>
+    // ═══════════════════════════════════════════════════════════
+    //  GÖRSEL EFEKTLER
+    // ═══════════════════════════════════════════════════════════
     function spawnEmbers(id, n) {
         const w = document.getElementById(id);
         if (!w) return;
@@ -499,9 +500,7 @@
             w.appendChild(e);
         }
     }
-    spawnEmbers('em1', 20);
-    spawnEmbers('em2', 14);
-    spawnEmbers('em3', 22);
+    spawnEmbers('em1', 20); spawnEmbers('em2', 14); spawnEmbers('em3', 22);
 
     const eq = document.getElementById('eq');
     for (let i = 0; i < 12; i++) {
@@ -518,19 +517,14 @@
         const d = document.createElement('div');
         d.className = 'bullet';
         d.innerHTML = '<div class="b-core"><div class="b-crack"></div></div>';
-        d.style.left = x + 'px';
-        d.style.top  = y + 'px';
+        d.style.left = x + 'px'; d.style.top  = y + 'px';
         document.body.appendChild(d);
         setTimeout(() => d.remove(), 9000);
     }
-    document.addEventListener('click',      e => spawnBullet(e.clientX, e.clientY, e.target));
-    document.addEventListener('touchstart', e => {
-        const t = e.changedTouches[0];
-        spawnBullet(t.clientX, t.clientY, e.target);
-    }, { passive: true });
+    document.addEventListener('click', e => spawnBullet(e.clientX, e.clientY, e.target));
+    document.addEventListener('touchstart', e => { const t = e.changedTouches[0]; spawnBullet(t.clientX, t.clientY, e.target); }, { passive: true });
 
     let gecisKilitli = false;
-
     function degistir(eskiId, yeniId) {
         if (gecisKilitli) return;
         gecisKilitli = true;
@@ -547,52 +541,34 @@
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  MÜZİK BAŞLATMA VE YAKALAMA (Düzeltildi)
+    //  MÜZİK VE VİDEO İŞLEMLERİ (Sorunların Çözüldüğü Yer)
     // ═══════════════════════════════════════════════════════════
     const fon = document.getElementById('vadiMuzigi');
     const HVOL = 0.38;
     let muzikAcik = false;
-    let fadeTimer = null;
-
-    function fade(hedef, hiz) {
-        clearInterval(fadeTimer);
-        fadeTimer = setInterval(() => {
-            const yeni = hedef > fon.volume
-                ? Math.min(hedef, fon.volume + hiz)
-                : Math.max(hedef, fon.volume - hiz);
-            fon.volume = yeni;
-            if (Math.abs(fon.volume - hedef) < 0.001) {
-                fon.volume = hedef;
-                clearInterval(fadeTimer);
-            }
-        }, 60);
-    }
 
     function muzikBaslat() {
         if (muzikAcik) return;
-        fon.volume = 0.05; // 0 Yerine 0.05'ten başlatıyoruz ki tarayıcı sessiz sanıp kısıtlamasın
-        const playPromise = fon.play();
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
+        fon.volume = HVOL; // Fade iptal edildi, direkt ses açılır.
+        let mPromise = fon.play();
+        if (mPromise !== undefined) {
+            mPromise.then(() => {
                 muzikAcik = true;
-                fade(HVOL, 0.022);
                 eqAc();
             }).catch(err => {
-                console.warn('Müzik başlatılamadı, zorunlu ses atanıyor:', err);
-                fon.volume = HVOL; // Eğer fade engellenirse direkt sesi açar
-                eqAc();
+                console.warn('Müzik başlatılamadı:', err);
+                // Tarayıcı hala bloke ediyorsa zorla deniyoruz
             });
         }
     }
 
     let sesBasladi = false;
-
     function baslangicRaconuKes(btn) {
         if (sesBasladi) return;
         sesBasladi = true;
         btn.disabled = true;
 
-        muzikBaslat();
+        muzikBaslat(); // Tıklama ile anında müziği zorlar
 
         const sesIlk = document.getElementById('sesIlk');
         let gecti = false;
@@ -610,23 +586,21 @@
         degistir('ekran-karakterler', 'ekran-' + k);
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  VİDEO BAŞLATMA (Düzeltildi)
-    // ═══════════════════════════════════════════════════════════
     function videoBaslat(k, btn) {
         const v    = document.getElementById('video-' + k);
         const yazi = document.getElementById('yazi-' + k);
         btn.disabled = true;
         yazi.style.display = 'block';
 
-        fade(0, 0.028); eqKapat();
+        fon.volume = 0.05; // Konuşma duyulsun diye arka fon kısılır
+        eqKapat();
 
         v.volume = 1;
-        const playPromise = v.play();
+        let p = v.play();
         
-        // Polat videosu ve diğer videolar için daha sağlam bir hata yakalama (Promise)
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
+        // Polat videosu burada zorla yüklenip oynatılıyor
+        if (p !== undefined) {
+            p.catch(error => {
                 console.log("Video otomatik başlamadı, yeniden yükleniyor...", error);
                 v.load();
                 v.play();
@@ -634,7 +608,8 @@
         }
 
         v.addEventListener('ended', () => {
-            fade(HVOL, 0.022); eqAc();
+            fon.volume = HVOL; // Müzik geri açılır
+            eqAc();
             setTimeout(() => {
                 degistir('ekran-' + k, 'ekran-final');
                 setTimeout(() => {
@@ -652,17 +627,13 @@
         const krt = document.getElementById('dogumGunuKarti');
         const khv = document.getElementById('video-kahkaha');
 
-        fade(0, 0.028); eqKapat();
+        fon.volume = 0.05; 
+        eqKapat();
 
         function oynat(el) {
             el.volume = 1;
-            const playPromise = el.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    el.load();
-                    el.play();
-                });
-            }
+            let p = el.play();
+            if(p !== undefined) { p.catch(() => { el.load(); el.play(); }); }
         }
 
         oynat(fv);
@@ -676,13 +647,15 @@
             ev.addEventListener('ended', () => {
                 ev.style.display = 'none';
                 krt.classList.add('goster');
-                fade(HVOL, 0.018); eqAc();
+                fon.volume = HVOL; 
+                eqAc();
 
                 setTimeout(() => {
                     krt.classList.remove('goster');
                     khv.style.display = 'block';
                     if (khv.readyState === 0) khv.load();
-                    fade(0, 0.028); eqKapat();
+                    fon.volume = 0.05; 
+                    eqKapat();
                     oynat(khv);
                 }, 10000);
             }, { once:true });
