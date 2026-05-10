@@ -120,6 +120,7 @@
         background-size:cover;
         background-position:center center;
         background-repeat:no-repeat;
+        /* background-attachment:fixed KALDIRILDI — iOS'ta tamamen bozuyor */
     }
     .screen.active  { display:flex; animation:sIn .65s ease-out forwards; }
     .screen.leaving { animation:sOut .32s ease-in forwards; }
@@ -161,6 +162,7 @@
     }
     .baslik-kutu { text-align:left; }
 
+    /* Stagger animasyonlar */
     .etiket {
         font-size:clamp(9px,2vw,12px); letter-spacing:7px;
         color:#a03030; text-transform:uppercase;
@@ -221,6 +223,8 @@
         border-color:#cc2222; transform:translateY(-2px);
     }
     .btn-racon:disabled { opacity:0; pointer-events:none; }
+
+    /* Karakter / video ekranlarındaki butonlar animasyonsuz çıksın */
     .btn-static { opacity:1 !important; animation:none !important; }
 
     /* ─── PALA ─────────────────────────────────────────────── */
@@ -348,10 +352,17 @@
 
     /* ─── MOBİL ────────────────────────────────────────────── */
     @media (max-width:600px) {
-        .screen { background-position: center center; background-size: cover; }
+        /* Arka plan görünürlüğü: cover + yatay orta, dikey orta */
+        .screen {
+            background-position: center center;
+            background-size: cover;
+        }
+        /* Giriş ekranı arka planının önemli kısmını gösteri (sola kaydır) */
         #ekran-giris { background-position: 32% center; }
+
         .bar { height: clamp(28px,4vh,40px); }
         :root { --bh: clamp(28px,4vh,40px); }
+
         .giris-wrap {
             padding-left:0; justify-content:center;
             align-items:flex-start;
@@ -361,7 +372,11 @@
         .baslik-kutu { text-align:center; }
         .kizilcizgi  { margin:14px auto; }
         @keyframes cizgi { to{width:110px} }
-        .pala { height:38dvh; max-height:290px; right:-4px; bottom:calc(var(--bh) - 4px); }
+
+        .pala {
+            height:38dvh; max-height:290px;
+            right:-4px; bottom:calc(var(--bh) - 4px);
+        }
         .char-btn img { width:54px; height:54px; }
         .char-meta h3 { font-size:16px; }
         .btn-racon { padding:12px 30px; font-size:12px; }
@@ -370,19 +385,25 @@
 </head>
 <body>
 
+    <!-- Sinematik katmanlar -->
     <div class="grain"></div>
     <div class="scanlines"></div>
     <div class="vinyet"></div>
     <div class="bar bar-top"></div>
     <div class="bar bar-bottom"></div>
+
+    <!-- Müzik equalizer göstergesi -->
     <div id="eq"></div>
 
-    <audio id="vadiMuzigi" src="pusu_muzik.mp3" loop preload="auto"></audio>
+    <!-- Ses -->
+    <audio id="vadiMuzigi" src="pusu_muzik.mp3" loop></audio>
     <audio id="sesIlk"     src="babayigit.mp3"  preload="auto"></audio>
 
+    <!-- ═══════ EKRAN 1 : GİRİŞ ════════════════════════════════ -->
     <div id="ekran-giris" class="screen active">
         <div class="overlay"></div>
         <div class="ewrap" id="em1"></div>
+
         <div class="giris-wrap">
             <div class="baslik-kutu">
                 <p class="etiket">&#9632; Kurtlar Vadisi &#9632;</p>
@@ -392,9 +413,11 @@
                 <button class="btn-racon" onclick="baslangicRaconuKes(this)">&#9654;&nbsp;RACON KES</button>
             </div>
         </div>
+
         <img src="pala.png" alt="Pala" class="pala">
     </div>
 
+    <!-- ═══════ EKRAN 2 : KARAKTER SEÇ ═════════════════════════ -->
     <div id="ekran-karakterler" class="screen diger-ekran">
         <div class="overlay"></div>
         <div class="ewrap" id="em2"></div>
@@ -422,11 +445,12 @@
         </div>
     </div>
 
+    <!-- ═══════ EKRANLAR 3–6 : KARAKTER VİDEOLARI ══════════════ -->
     <div id="ekran-cakir" class="screen diger-ekran">
         <div class="overlay"></div>
         <div class="z2 vsarici">
             <div id="yazi-cakir" class="yan-yazi">"Azdan az, çoktan çok gider…"</div>
-            <video id="video-cakir" class="racon-video" src="racon_cakir.mp4" playsinline webkit-playsinline preload="auto"></video>
+            <video id="video-cakir" class="racon-video" src="racon_cakir.mp4" playsinline webkit-playsinline preload="none"></video>
         </div>
         <button id="btn-cakir" class="btn-racon btn-static z2" onclick="videoBaslat('cakir',this)">&#9654;&nbsp;RACON KES</button>
     </div>
@@ -435,7 +459,7 @@
         <div class="overlay"></div>
         <div class="z2 vsarici">
             <div id="yazi-polat" class="yan-yazi">"Ben Polat Alemdar'ım!"</div>
-            <video id="video-polat" class="racon-video" src="ben_polat_alemdarim.mp4" playsinline webkit-playsinline preload="auto"></video>
+            <video id="video-polat" class="racon-video" src="ben_polat_alemdarim.mp4" playsinline webkit-playsinline preload="none"></video>
         </div>
         <button id="btn-polat" class="btn-racon btn-static z2" onclick="videoBaslat('polat',this)">&#9654;&nbsp;RACON KES</button>
     </div>
@@ -444,7 +468,7 @@
         <div class="overlay"></div>
         <div class="z2 vsarici">
             <div id="yazi-akbey" class="yan-yazi">"İki kişinin bildiği sır değildir."</div>
-            <video id="video-akbey" class="racon-video" src="3_2.mp4" playsinline webkit-playsinline preload="auto"></video>
+            <video id="video-akbey" class="racon-video" src="3_2.mp4" playsinline webkit-playsinline preload="none"></video>
         </div>
         <button id="btn-akbey" class="btn-racon btn-static z2" onclick="videoBaslat('akbey',this)">&#9654;&nbsp;RACON KES</button>
     </div>
@@ -453,18 +477,19 @@
         <div class="overlay"></div>
         <div class="z2 vsarici">
             <div id="yazi-memati" class="yan-yazi">"Kalk ulan kalk!"</div>
-            <video id="video-memati" class="racon-video" src="kalk.mp4" playsinline webkit-playsinline preload="auto"></video>
+            <video id="video-memati" class="racon-video" src="kalk.mp4" playsinline webkit-playsinline preload="none"></video>
         </div>
         <button id="btn-memati" class="btn-racon btn-static z2" onclick="videoBaslat('memati',this)">&#9654;&nbsp;RACON KES</button>
     </div>
 
+    <!-- ═══════ EKRAN 7 : FİNAL ═════════════════════════════════ -->
     <div id="ekran-final" class="screen diger-ekran">
         <div class="overlay"></div>
         <div class="ewrap" id="em3"></div>
 
-        <video id="final-video"   class="fvid" src="son_video.mp4" playsinline webkit-playsinline preload="auto"></video>
-        <video id="extra-video"   class="fvid" src="dogum1.mp4"    playsinline webkit-playsinline preload="auto"></video>
-        <video id="video-kahkaha" class="fvid" src="kahkaha.mp4"   playsinline webkit-playsinline preload="auto"></video>
+        <video id="final-video"   class="fvid" src="son_video.mp4" playsinline webkit-playsinline preload="none"></video>
+        <video id="extra-video"   class="fvid" src="dogum1.mp4"    playsinline webkit-playsinline preload="none"></video>
+        <video id="video-kahkaha" class="fvid" src="kahkaha.mp4"   playsinline webkit-playsinline preload="none"></video>
 
         <button id="final-btn" class="btn-racon btn-static z2" onclick="finalVideosuBaslat(this)">&#9654;&nbsp;RACON KES</button>
 
@@ -477,7 +502,7 @@
 
     <script>
     // ═══════════════════════════════════════════════════════════
-    //  GÖRSEL EFEKTLER
+    //  EMBER PARTİKÜLLER
     // ═══════════════════════════════════════════════════════════
     function spawnEmbers(id, n) {
         const w = document.getElementById(id);
@@ -500,8 +525,13 @@
             w.appendChild(e);
         }
     }
-    spawnEmbers('em1', 20); spawnEmbers('em2', 14); spawnEmbers('em3', 22);
+    spawnEmbers('em1', 20);
+    spawnEmbers('em2', 14);
+    spawnEmbers('em3', 22);
 
+    // ═══════════════════════════════════════════════════════════
+    //  MÜZİK EQUALİZER GÖSTERGESİ
+    // ═══════════════════════════════════════════════════════════
     const eq = document.getElementById('eq');
     for (let i = 0; i < 12; i++) {
         const b = document.createElement('div');
@@ -512,19 +542,30 @@
     const eqAc    = () => eq.classList.add('on');
     const eqKapat = () => eq.classList.remove('on');
 
+    // ═══════════════════════════════════════════════════════════
+    //  KURŞUN DELİĞİ
+    // ═══════════════════════════════════════════════════════════
     function spawnBullet(x, y, target) {
         if (target.closest('.btn-racon') || target.closest('.char-btn')) return;
         const d = document.createElement('div');
         d.className = 'bullet';
         d.innerHTML = '<div class="b-core"><div class="b-crack"></div></div>';
-        d.style.left = x + 'px'; d.style.top  = y + 'px';
+        d.style.left = x + 'px';
+        d.style.top  = y + 'px';
         document.body.appendChild(d);
         setTimeout(() => d.remove(), 9000);
     }
-    document.addEventListener('click', e => spawnBullet(e.clientX, e.clientY, e.target));
-    document.addEventListener('touchstart', e => { const t = e.changedTouches[0]; spawnBullet(t.clientX, t.clientY, e.target); }, { passive: true });
+    document.addEventListener('click',      e => spawnBullet(e.clientX, e.clientY, e.target));
+    document.addEventListener('touchstart', e => {
+        const t = e.changedTouches[0];
+        spawnBullet(t.clientX, t.clientY, e.target);
+    }, { passive: true });
 
+    // ═══════════════════════════════════════════════════════════
+    //  EKRAN GEÇİŞİ
+    // ═══════════════════════════════════════════════════════════
     let gecisKilitli = false;
+
     function degistir(eskiId, yeniId) {
         if (gecisKilitli) return;
         gecisKilitli = true;
@@ -541,34 +582,51 @@
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  MÜZİK VE VİDEO İŞLEMLERİ (Sorunların Çözüldüğü Yer)
+    //  MÜZİK — FADE SİSTEMİ
+    //  Müziği kullanıcı butonuna bastıktan hemen sonra başlatıyoruz.
+    //  Bu sayede mobil tarayıcılar "kullanıcı eylemi" şartını karşılar.
     // ═══════════════════════════════════════════════════════════
     const fon = document.getElementById('vadiMuzigi');
     const HVOL = 0.38;
     let muzikAcik = false;
+    let fadeTimer = null;
+
+    function fade(hedef, hiz) {
+        clearInterval(fadeTimer);
+        fadeTimer = setInterval(() => {
+            const yeni = hedef > fon.volume
+                ? Math.min(hedef, fon.volume + hiz)
+                : Math.max(hedef, fon.volume - hiz);
+            fon.volume = yeni;
+            if (Math.abs(fon.volume - hedef) < 0.001) {
+                fon.volume = hedef;
+                clearInterval(fadeTimer);
+            }
+        }, 60);
+    }
 
     function muzikBaslat() {
         if (muzikAcik) return;
-        fon.volume = HVOL; // Fade iptal edildi, direkt ses açılır.
-        let mPromise = fon.play();
-        if (mPromise !== undefined) {
-            mPromise.then(() => {
-                muzikAcik = true;
-                eqAc();
-            }).catch(err => {
-                console.warn('Müzik başlatılamadı:', err);
-                // Tarayıcı hala bloke ediyorsa zorla deniyoruz
-            });
-        }
+        fon.volume = 0;
+        // .play() buton click'inden hemen sonra çağrılıyor — mobil izin tamam
+        fon.play().then(() => {
+            muzikAcik = true;
+            fade(HVOL, 0.022);
+            eqAc();
+        }).catch(err => console.warn('Müzik başlatılamadı:', err));
     }
 
+    // ═══════════════════════════════════════════════════════════
+    //  BAŞLANGIÇ
+    // ═══════════════════════════════════════════════════════════
     let sesBasladi = false;
+
     function baslangicRaconuKes(btn) {
         if (sesBasladi) return;
         sesBasladi = true;
         btn.disabled = true;
 
-        muzikBaslat(); // Tıklama ile anında müziği zorlar
+        muzikBaslat(); // kullanıcı tıklaması → müzik izni garantili
 
         const sesIlk = document.getElementById('sesIlk');
         let gecti = false;
@@ -582,34 +640,33 @@
         setTimeout(gec, 7000);
     }
 
+    // ═══════════════════════════════════════════════════════════
+    //  KARAKTER SEÇİMİ
+    // ═══════════════════════════════════════════════════════════
     function karakterSec(k) {
         degistir('ekran-karakterler', 'ekran-' + k);
+        setTimeout(() => {
+            const v = document.getElementById('video-' + k);
+            if (v && v.readyState === 0) v.load();
+        }, 380);
     }
 
+    // ═══════════════════════════════════════════════════════════
+    //  KARAKTER VİDEOSU
+    // ═══════════════════════════════════════════════════════════
     function videoBaslat(k, btn) {
         const v    = document.getElementById('video-' + k);
         const yazi = document.getElementById('yazi-' + k);
         btn.disabled = true;
         yazi.style.display = 'block';
 
-        fon.volume = 0.05; // Konuşma duyulsun diye arka fon kısılır
-        eqKapat();
+        fade(0, 0.028); eqKapat();
 
         v.volume = 1;
-        let p = v.play();
-        
-        // Polat videosu burada zorla yüklenip oynatılıyor
-        if (p !== undefined) {
-            p.catch(error => {
-                console.log("Video otomatik başlamadı, yeniden yükleniyor...", error);
-                v.load();
-                v.play();
-            });
-        }
+        v.play().catch(() => { v.load(); v.play().catch(() => {}); });
 
         v.addEventListener('ended', () => {
-            fon.volume = HVOL; // Müzik geri açılır
-            eqAc();
+            fade(HVOL, 0.022); eqAc();
             setTimeout(() => {
                 degistir('ekran-' + k, 'ekran-final');
                 setTimeout(() => {
@@ -620,6 +677,9 @@
         }, { once:true });
     }
 
+    // ═══════════════════════════════════════════════════════════
+    //  FİNAL VİDEO ZİNCİRİ
+    // ═══════════════════════════════════════════════════════════
     function finalVideosuBaslat(btn) {
         btn.disabled = true;
         const fv  = document.getElementById('final-video');
@@ -627,13 +687,11 @@
         const krt = document.getElementById('dogumGunuKarti');
         const khv = document.getElementById('video-kahkaha');
 
-        fon.volume = 0.05; 
-        eqKapat();
+        fade(0, 0.028); eqKapat();
 
         function oynat(el) {
             el.volume = 1;
-            let p = el.play();
-            if(p !== undefined) { p.catch(() => { el.load(); el.play(); }); }
+            return el.play().catch(() => { el.load(); return el.play().catch(() => {}); });
         }
 
         oynat(fv);
@@ -647,15 +705,13 @@
             ev.addEventListener('ended', () => {
                 ev.style.display = 'none';
                 krt.classList.add('goster');
-                fon.volume = HVOL; 
-                eqAc();
+                fade(HVOL, 0.018); eqAc();
 
                 setTimeout(() => {
                     krt.classList.remove('goster');
                     khv.style.display = 'block';
                     if (khv.readyState === 0) khv.load();
-                    fon.volume = 0.05; 
-                    eqKapat();
+                    fade(0, 0.028); eqKapat();
                     oynat(khv);
                 }, 10000);
             }, { once:true });
